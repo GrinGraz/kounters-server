@@ -27,9 +27,9 @@ fun Routing.countersEndpoints() = route(path = API_VERSION) {
         with(call) {
             val body: CreateCounterBody = receive()
             val counter = Counter(
-                    id = Id(id.incrementAndGet()),
+                    id = id.incrementAndGet(),
                     name = body.name,
-                    count = Count(0)
+                    count = 0
             )
             counters += counter
             respond(HttpStatusCode.Created, counter)
@@ -41,9 +41,9 @@ fun Routing.countersEndpoints() = route(path = API_VERSION) {
             val body: CreateCountersBody = receive()
             body.names.forEach { name ->
                 val counter = Counter(
-                        id = Id(id.incrementAndGet()),
+                        id = id.incrementAndGet(),
                         name = name,
-                        count = Count(0)
+                        count = 0
                 )
                 counters += counter
             }
@@ -57,7 +57,7 @@ fun Routing.countersEndpoints() = route(path = API_VERSION) {
         with(call) {
             val body: EditCounterBody = receive()
             val counter: Counter = counters.first { it.id == body.id }
-            counter.count.value += 1
+            counter.count += 1
             respond(HttpStatusCode.OK, counter)
         }
     }
@@ -67,7 +67,7 @@ fun Routing.countersEndpoints() = route(path = API_VERSION) {
             val body: EditCountersBody = receive()
             body.ids.forEach { id ->
                 val counter: Counter = counters.first { it.id == id }
-                counter.count.value += 1
+                counter.count += 1
             }
             respond(HttpStatusCode.OK, counters.takeLast(body.ids.size))
         }
@@ -78,8 +78,8 @@ fun Routing.countersEndpoints() = route(path = API_VERSION) {
     patch(path = COUNTER_PATH + DEC_PATH) {
         with(call) {
             val body: EditCounterBody = receive()
-            val counter: Counter = counters.first { it.id == body.id && it.count.value > 0 }
-            counter.count.value -= 1
+            val counter: Counter = counters.first { it.id == body.id && it.count > 0 }
+            counter.count -= 1
             respond(HttpStatusCode.OK, counter)
         }
     }
@@ -88,8 +88,8 @@ fun Routing.countersEndpoints() = route(path = API_VERSION) {
         with(call) {
             val body: EditCountersBody = receive()
             body.ids.forEach { id ->
-                val counter: Counter = counters.first { it.id == id && it.count.value > 0 }
-                counter.count.value -= 1
+                val counter: Counter = counters.first { it.id == id && it.count > 0 }
+                counter.count -= 1
             }
             respond(HttpStatusCode.OK, counters.takeLast(body.ids.size))
         }
